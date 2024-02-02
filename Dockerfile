@@ -1,8 +1,24 @@
-# Getting base image
-FROM node:18
+# Use an official Node.js runtime as a base image
+FROM node:20
 
-#run gets executed during build time
-run apt-get update
+# Install gcc to compile C++ code
+RUN apt-get update && \
+    apt-get install -y gcc g++
 
-#CMD gets executed during run time, (When container is created)
-CMD ["echo", "Hello World...! from my first docker image"]
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 3000
+
+# Command to run your application
+CMD ["node", "src/index.js"]
